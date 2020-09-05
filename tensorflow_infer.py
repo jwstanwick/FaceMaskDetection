@@ -3,6 +3,10 @@ import cv2
 import time
 import argparse
 
+import os
+from random import *
+import time
+
 import numpy as np
 from PIL import Image
 #from keras.models import model_from_json
@@ -44,6 +48,7 @@ def inference(image,
     :param show_result: whether to display the image.
     :return:
     '''
+    count = 0
     # image = np.copy(image)
     output_info = []
     height, width, _ = image.shape
@@ -79,11 +84,23 @@ def inference(image,
         if draw_result:
             if class_id == 0:
                 color = (0, 255, 0)
+                count = 0
             else:
                 color = (255, 0, 0)
+                count = count+1
             cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
             cv2.putText(image, "%s: %.2f" % (id2class[class_id], conf), (xmin + 2, ymin - 2),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, color)
+            if count >= 50:
+                r = random(1,3)
+                if r = 1:
+                    os.system("aplay sound1.wav")
+                elif r = 2:
+                    os.systme("aplay sound2.wav")
+                elif r = 3:
+                    os.system("aplay sound3.wav")
+                count = 0
+                time.sleep(1)
         output_info.append([class_id, conf, xmin, ymin, xmax, ymax])
 
     if show_result:
@@ -117,7 +134,7 @@ def run_on_video(video_path, output_video_name, conf_thresh):
                       draw_result=True,
                       show_result=False)
             cv2.imshow('image', img_raw[:, :, ::-1])
-            cv2.waitKey(1)
+            cv2.waitKey(0.1)
             inference_stamp = time.time()
             # writer.write(img_raw)
             write_frame_stamp = time.time()

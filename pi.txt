@@ -1,0 +1,3 @@
+sudo apt-get update && sudo apt-get upgrade && sudo apt install python3-opencv && sudo apt update && sudo apt install python3-dev python3-pip python3-venv && sudo apt install libatlas-base-dev && pip3 install --user --upgrade tensorflow
+
+python3 tensorflow_infer.py --img-mode 0 --video-path 0
