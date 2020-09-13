@@ -1,0 +1,7 @@
+Steps
+- Install Python 3.5
+- Install prereqs
+- Launch
+
+pip install opencv-python && pip install pillow && pip install --user --upgrade tensorflow
+python tensorflow_infer.py --img-mode 0 --video-path 0

@@ -3,10 +3,12 @@ import cv2
 import time
 import argparse
 
-import os
-from random import *
+from playsound import playsound
+import random
 import time
 
+global count
+count = 0
 import numpy as np
 from PIL import Image
 #from keras.models import model_from_json
@@ -30,7 +32,6 @@ anchors_exp = np.expand_dims(anchors, axis=0)
 
 id2class = {0: 'Mask', 1: 'NoMask'}
 
-
 def inference(image,
               conf_thresh=0.5,
               iou_thresh=0.4,
@@ -48,7 +49,7 @@ def inference(image,
     :param show_result: whether to display the image.
     :return:
     '''
-    count = 0
+    global count
     # image = np.copy(image)
     output_info = []
     height, width, _ = image.shape
@@ -80,31 +81,29 @@ def inference(image,
         ymin = max(0, int(bbox[1] * height))
         xmax = min(int(bbox[2] * width), width)
         ymax = min(int(bbox[3] * height), height)
-
+        global mask
         if draw_result:
             if class_id == 0:
                 color = (0, 255, 0)
+                mask = True
                 count = 0
             else:
                 color = (255, 0, 0)
-                count = count+1
+                mask = False
+                count += 1
+                if count >= 30:
+                    r = random.randint(1,10)
+                    sound = 'sound' + str(r) + '.mp3'
+                    playsound(sound)
+                    count = 0
             cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
             cv2.putText(image, "%s: %.2f" % (id2class[class_id], conf), (xmin + 2, ymin - 2),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, color)
-            if count >= 50:
-                r = random(1,3)
-                if r = 1:
-                    os.system("aplay sound1.wav")
-                elif r = 2:
-                    os.systme("aplay sound2.wav")
-                elif r = 3:
-                    os.system("aplay sound3.wav")
-                count = 0
-                time.sleep(1)
+            
         output_info.append([class_id, conf, xmin, ymin, xmax, ymax])
-
     if show_result:
         Image.fromarray(image).show()
+
     return output_info
 
 
@@ -134,7 +133,7 @@ def run_on_video(video_path, output_video_name, conf_thresh):
                       draw_result=True,
                       show_result=False)
             cv2.imshow('image', img_raw[:, :, ::-1])
-            cv2.waitKey(0.1)
+            cv2.waitKey(1)
             inference_stamp = time.time()
             # writer.write(img_raw)
             write_frame_stamp = time.time()
@@ -151,8 +150,13 @@ if __name__ == "__main__":
     parser.add_argument('--img-mode', type=int, default=1, help='set 1 to run on image, 0 to run on video.')
     parser.add_argument('--img-path', type=str, help='path to your image.')
     parser.add_argument('--video-path', type=str, default='0', help='path to your video, `0` means to use camera.')
-    # parser.add_argument('--hdf5', type=str, help='keras hdf5 file')
+    #parser.add_argument('--insult', type=int, default=1, help='set to 1 to have the bot insult you, set to 0 for audio less operation')
+    #parser.add_argument('--hdf5', type=str, help='keras hdf5 file')
     args = parser.parse_args()
+    #if args.insult:
+    #insultBot = True
+    global count
+    count = 0
     if args.img_mode:
         imgPath = args.img_path
         img = cv2.imread(imgPath)
