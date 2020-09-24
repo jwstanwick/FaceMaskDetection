@@ -91,11 +91,12 @@ def inference(image,
                 color = (255, 0, 0)
                 mask = False
                 count += 1
-                if count >= 30:
-                    r = random.randint(1,10)
+                if count >= 20:
+                    r = random.randint(1,11)
                     sound = 'sound' + str(r) + '.mp3'
                     playsound(sound)
                     count = 0
+                    time.sleep(2)
             cv2.rectangle(image, (xmin, ymin), (xmax, ymax), color, 2)
             cv2.putText(image, "%s: %.2f" % (id2class[class_id], conf), (xmin + 2, ymin - 2),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, color)
